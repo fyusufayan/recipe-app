@@ -4,6 +4,7 @@ import com.daironiq.recipeapp.commands.RecipeCommand;
 import com.daironiq.recipeapp.converters.RecipeCommandToRecipe;
 import com.daironiq.recipeapp.converters.RecipeToRecipeCommand;
 import com.daironiq.recipeapp.domain.Recipe;
+import com.daironiq.recipeapp.exceptions.NotFoundException;
 import com.daironiq.recipeapp.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,8 @@ public class RecipeServiceImpl implements RecipeService{
 
         Optional<Recipe> recipeOptional=recipeRepository.findById(l);
             if (!recipeOptional.isPresent()){
-                throw new RuntimeException("Recipe Not Found!");
+                //throw new RuntimeException("Recipe Not Found!");
+                throw new NotFoundException("Recipe Not Found. For Id value: "+l.toString());
             }
         return recipeOptional.get();
     }

@@ -3,17 +3,22 @@ package com.daironiq.recipeapp.services;
 import com.daironiq.recipeapp.converters.RecipeCommandToRecipe;
 import com.daironiq.recipeapp.converters.RecipeToRecipeCommand;
 import com.daironiq.recipeapp.domain.Recipe;
+import com.daironiq.recipeapp.exceptions.NotFoundException;
 import com.daironiq.recipeapp.repositories.RecipeRepository;
+
+import org.aspectj.weaver.ast.Not;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.stubbing.BaseStubbing;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 class RecipeServiceImplTest {
@@ -34,6 +39,24 @@ class RecipeServiceImplTest {
         MockitoAnnotations.initMocks(this);
         recipeService=new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
+
+    @Test
+    public void getRecipeByIdTestNotFound()throws Exception{
+
+        Optional<Recipe> recipeOptional=Optional.empty();
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        NotFoundException thrown = assertThrows(
+                NotFoundException.class,
+                () -> recipeService.findById(1L),
+                "Recipe Not Found!"
+        );
+
+        assertTrue(thrown.getMessage().contains("Recipe"));
+
+    }
+
 
     @Test
     void getRecipeByIdTest() {
